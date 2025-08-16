@@ -5,6 +5,7 @@
   <title>Music Player</title>
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,500,700" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
       box-sizing: border-box;
@@ -248,6 +249,79 @@
     #popup button:hover {
       color: #ccc;
     }
+
+    @media (max-width: 768px) {
+  body {
+    align-items: flex-start;
+    padding: 20px;
+    height: auto;
+  }
+
+  .grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
+
+  .box1 {
+    order: 1;
+    width: 100%;
+    height: auto;
+  }
+
+  .disc {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+  }
+
+  .nextup {
+    order: 2;
+    max-height: 250px;
+    padding-right: 0;
+    width: 100%;
+  }
+
+  .box3,
+  .box4 {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .box3 i,
+  .upload-btn i {
+    font-size: 2em;
+  }
+
+  .upload-btn {
+    justify-content: center;
+    padding: 20px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transform: scale(0.9);
+  }
+
+  .cornerbox {
+    width: 60px;
+    height: 60px;
+    top: 10px;
+    left: 10px;
+  }
+  .disc {
+  width: clamp(200px, 30vw, 200px);
+  }
+
+
+  #popup {
+    left: 10px;
+    right: 10px;
+    top: 80px;
+    width: auto;
+  }
+}
+
       </style>
 </head>
 <body>
