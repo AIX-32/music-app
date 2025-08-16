@@ -115,11 +115,13 @@
       margin: 0 10px;
       cursor: pointer;
       color: #7d7d7d;  
-      transition: color 0.3s ease;    
+      transition: all 0.3s ease;    
     }
     
     i:hover {
       color: #999999;
+      transform: scale(1.1);
+      transform: translateY(-3px);
     }
     
     .card {
@@ -137,7 +139,15 @@
       align-items: center;
       gap: 15px;
       flex-shrink: 0; 
+      transition: all 0.4s ease;
     }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      background: #3f3f3f;
+      border-color: #686868;
+    }
+    
     
     .card img {
       width: 60px;
@@ -524,5 +534,60 @@
       document.getElementById("popup").classList.remove("show");
       localStorage.setItem("popupClosed", "true");
     });
-  </script>
+  // Add scramble-free spinning/scrubbing:
+  let isScrubbing = false;
+  let startAngle = 0;
+  let startTime = 0;
+
+  function getDiscCenter(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width/2,
+      y: rect.top + rect.height/2
+    };
+  }
+
+  function angleFromEvent(e, center) {
+    const x = (e.clientX ?? e.touches?.[0]?.clientX) - center.x;
+    const y = (e.clientY ?? e.touches?.[0]?.clientY) - center.y;
+    return Math.atan2(y, x) * (180 / Math.PI);
+  }
+
+  disc.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    isScrubbing = true;
+    disc.style.animationPlayState = 'paused'; // pause auto-spin
+    const center = getDiscCenter(disc);
+    startAngle = angleFromEvent(e, center);
+    startTime = audio.currentTime;
+    disc.setPointerCapture(e.pointerId);
+  });
+
+  disc.addEventListener('pointermove', e => {
+    if (!isScrubbing) return;
+    const center = getDiscCenter(disc);
+    const currentAngle = angleFromEvent(e, center);
+    const delta = currentAngle - startAngle;
+    // map 360° rotation to full duration → seconds per degree:
+    const secondsPerDegree = audio.duration / 360;
+    audio.currentTime = Math.min(
+      Math.max(startTime + delta * secondsPerDegree, 0),
+      audio.duration
+    );
+    // visually rotate disc to match scrub position
+    disc.style.transform = `rotate(${delta}deg)`;
+  });
+
+  disc.addEventListener('pointerup', e => {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    disc.style.animationPlayState = audio.paused ? 'paused' : 'running';
+    // remove inline transform so CSS animation takes over smoothly
+    disc.style.transform = '';
+    disc.releasePointerCapture(e.pointerId);
+  });
+
+  // ensure pointer events work:
+  disc.style.touchAction = 'none';
+</script>
   
